@@ -1,0 +1,9 @@
+truthlens/backend/.venv/
+truthlens/backend/__pycache__/
+truthlens/backend/app/__pycache__/
+truthlens/backend/tests/__pycache__/
+truthlens/backend/.pytest_cache/
+truthlens/frontend/node_modules/
+*.pyc
+*.pyo
+.DS_Store
