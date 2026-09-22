@@ -47,8 +47,8 @@ body {
   background-position: center center;
   background-repeat: no-repeat;
   background-attachment: fixed;
-  opacity: 0.18;
-  filter: saturate(110%) contrast(105%);
+  opacity: 0.38;
+  filter: saturate(120%) contrast(110%);
   pointer-events: none;
   z-index: 0;
 }
