@@ -1,5 +1,5 @@
 import React from 'react';
-import { Shield, Send, ListFilter, HelpCircle, PlusCircle } from 'lucide-react';
+import { Shield, Send, ListFilter, HelpCircle } from 'lucide-react';
 
 export default function Navbar({ activeTab, setActiveTab }) {
   return (
@@ -53,16 +53,6 @@ export default function Navbar({ activeTab, setActiveTab }) {
               <span>Triage Rules</span>
             </button>
           </nav>
-
-          <button
-            type="button"
-            className="nav-cta-btn"
-            onClick={() => setActiveTab('submit')}
-            title="Submit a new viral claim for triage"
-          >
-            <PlusCircle className="w-4 h-4" />
-            <span>New Claim</span>
-          </button>
         </div>
       </div>
     </header>
