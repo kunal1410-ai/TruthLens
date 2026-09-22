@@ -1,0 +1,8 @@
+[build]
+builder = "nixpacks"
+buildCommand = "cd truthlens/frontend && npm install && npm run build"
+
+[deploy]
+startCommand = "cd truthlens/backend && pip install -r requirements.txt && uvicorn app.main:app --host 0.0.0.0 --port $PORT"
+healthcheckPath = "/api/health"
+restartPolicyType = "on_failure"
