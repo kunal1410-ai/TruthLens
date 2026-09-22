@@ -66,11 +66,19 @@ html {
 
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-  background-color: var(--bg-main);
   color: var(--text-main);
   line-height: 1.55;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #080c18;
+  background-image: 
+    linear-gradient(rgba(10, 15, 29, 0.78), rgba(10, 15, 29, 0.88)),
+    url('/bg.jpg');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  min-height: 100vh;
 }
 
 /* Base Layout */
@@ -82,12 +90,14 @@ body {
 
 /* ================= Top Navigation ================= */
 .navbar {
-  background: #ffffff;
-  border-bottom: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
   position: sticky;
   top: 0;
   z-index: 40;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 .navbar-container {
@@ -1252,8 +1262,16 @@ body {
   font-size: 2.25rem;
   font-weight: 800;
   letter-spacing: -0.03em;
-  color: #0f172a;
+  color: #ffffff;
   margin-top: 0.5rem;
+}
+
+.about-hero p {
+  color: #cbd5e1;
+}
+
+.about-container h2.section-title {
+  color: #f1f5f9;
 }
 
 .flow-card {
