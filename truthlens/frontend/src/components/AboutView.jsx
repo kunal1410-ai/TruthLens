@@ -55,10 +55,10 @@ export default function AboutView({ onStartDemo }) {
         <div className="decision-card">
           <div className="decision-header">
             <ArrowUpDown className="w-5 h-5 text-blue-600" />
-            <h3 className="font-bold text-slate-800 text-sm">DP1 — Risk-First Ordering</h3>
+            <h3 className="font-bold text-slate-800 text-sm">DP1 — 3-Tier Triage Ordering</h3>
           </div>
           <p className="text-xs text-slate-600 leading-relaxed mt-2">
-            Feed sorts HIGH risk claims above NORMAL claims, regardless of submission timestamp. Within each risk tier, recency applies. Triage demands addressing viral urgency before harmless recent posts.
+            <strong>Tier 1:</strong> Unverified + High Risk (newest first) &rarr; <strong>Tier 2:</strong> Unverified + Normal (newest first) &rarr; <strong>Tier 3:</strong> Reviewed claims (newest first). Once a claim has received a human verdict, it no longer competes for reviewer attention, keeping the feed focused on triage.
           </p>
         </div>
 

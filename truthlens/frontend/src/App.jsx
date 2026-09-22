@@ -57,6 +57,7 @@ export default function App() {
           claimId={selectedClaimId}
           onClose={handleCloseModal}
           onClaimUpdated={handleClaimUpdated}
+          onNavigateClaim={(nextId) => setSelectedClaimId(nextId)}
         />
       )}
     </div>

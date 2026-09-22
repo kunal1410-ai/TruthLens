@@ -72,7 +72,7 @@ export function StatusBadge({ status }) {
  * FlagChip — accepts { type, reason } objects (spec format).
  * Always shows reason text, never just a bare label.
  */
-export function FlagChip({ flag }) {
+export function FlagChip({ flag, showReason = true }) {
   // flag is { type: string, reason: string }
   const type = typeof flag === 'object' ? flag.type : flag;
   const reason = typeof flag === 'object' ? flag.reason : '';
@@ -81,6 +81,18 @@ export function FlagChip({ flag }) {
   if (type === 'Sensational') colorStyle = 'bg-orange-50 text-orange-800 border-orange-200';
   else if (type === 'Shouting') colorStyle = 'bg-purple-50 text-purple-800 border-purple-200';
   else if (type === 'Unsourced') colorStyle = 'bg-amber-50 text-amber-800 border-amber-200';
+
+  if (!showReason) {
+    return (
+      <span
+        className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded text-xs font-medium border ${colorStyle}`}
+        title={reason}
+      >
+        <Tag className="w-3 h-3 opacity-70 flex-shrink-0" />
+        {type}
+      </span>
+    );
+  }
 
   return (
     <span

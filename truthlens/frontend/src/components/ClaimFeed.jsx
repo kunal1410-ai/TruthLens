@@ -94,28 +94,6 @@ export default function ClaimFeed({ onSelectClaim, onNavigateSubmit, refreshSign
         </div>
       </div>
 
-      {/* Philosophy Banner */}
-      <div className="philosophy-banner">
-        <p className="text-sm font-semibold text-slate-800">
-          🔍 TruthLens is neutral by design — it checks information, not ideologies.
-        </p>
-        <p className="text-xs text-slate-600 mt-0.5">
-          Every claim stays <strong>"Unverified"</strong> until a human reviewer sets its status. Risk ≠ Truth.
-        </p>
-      </div>
-
-      {/* DP1 Banner */}
-      <div className="dp1-banner">
-        <div className="flex items-center gap-2 font-semibold text-slate-800 text-sm">
-          <span>⚡ Feed Order (DP1 — 3-tier triage):</span>
-        </div>
-        <p className="text-xs text-slate-600 mt-0.5">
-          <strong>Tier 1:</strong> Unverified + High Risk (newest first) →{' '}
-          <strong>Tier 2:</strong> Unverified + Normal (newest first) →{' '}
-          <strong>Tier 3:</strong> Reviewed claims (newest first). Once a human has rendered a verdict, the claim no longer competes for reviewer attention.
-        </p>
-      </div>
-
       {/* Filter Toolbar — only category + status per spec (no extra risk filter) */}
       <div className="feed-toolbar">
         <div className="toolbar-section">

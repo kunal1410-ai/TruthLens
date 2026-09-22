@@ -11,7 +11,7 @@ export default function Navbar({ activeTab, setActiveTab }) {
           </div>
           <div>
             <div className="brand-title">TruthLens</div>
-            <div className="brand-subtitle">Misinformation Triage Platform</div>
+            <div className="brand-subtitle">Risk ≠ Truth — AI triages urgency; humans determine veracity.</div>
           </div>
         </div>
 
