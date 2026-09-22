@@ -220,7 +220,7 @@ See [DECISIONS.md](./DECISIONS.md) for detailed rationale.
 
 ## Deployed URL
 
-`[PLACEHOLDER FOR LIVE DEPLOYMENT URL]`
+**https://truthlens-production-2908.up.railway.app**
 
 ---
 
