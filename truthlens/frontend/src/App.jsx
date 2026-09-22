@@ -51,7 +51,7 @@ export default function App() {
         )}
       </main>
 
-      {/* Claim Detail & Human Review Modal */}
+      {/* Claim Detail & Human Fact-Checking Review Modal */}
       {selectedClaimId && (
         <ClaimDetailModal
           claimId={selectedClaimId}

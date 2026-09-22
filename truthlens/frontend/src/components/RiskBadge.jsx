@@ -1,5 +1,15 @@
 import React from 'react';
-import { AlertTriangle, CheckCircle, XCircle, AlertCircle, ShieldAlert, ShieldCheck, Tag, Info } from 'lucide-react';
+import {
+  AlertTriangle,
+  CheckCircle2,
+  XCircle,
+  AlertCircle,
+  ShieldAlert,
+  ShieldCheck,
+  Tag,
+  Volume2,
+  HelpCircle
+} from 'lucide-react';
 
 /**
  * RiskBadge — handles exact spec risk strings: "High Risk" | "Normal"
@@ -8,21 +18,18 @@ export function RiskBadge({ level }) {
   const isHigh = level === 'High Risk';
   return (
     <span
-      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold tracking-wide uppercase shadow-sm ${
-        isHigh
-          ? 'bg-red-100 text-red-800 border border-red-300'
-          : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-      }`}
+      className={`risk-badge ${isHigh ? 'risk-badge-high' : 'risk-badge-normal'}`}
+      title={isHigh ? '2+ risk signals detected — priority triage' : 'Low risk signals detected'}
     >
       {isHigh ? (
         <>
-          <ShieldAlert className="w-3.5 h-3.5 text-red-600" />
-          High Risk
+          <ShieldAlert className="w-3.5 h-3.5 text-red-600 flex-shrink-0" />
+          <span>High Risk</span>
         </>
       ) : (
         <>
-          <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-          Normal
+          <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+          <span>Normal</span>
         </>
       )}
     </span>
@@ -32,37 +39,36 @@ export function RiskBadge({ level }) {
 /**
  * StatusBadge — handles exact spec status strings:
  * "Unverified" | "Verified True" | "False" | "Misleading"
- * Badge text matches spec literal strings exactly.
  */
 export function StatusBadge({ status }) {
   switch (status) {
     case 'Verified True':
       return (
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 border border-emerald-300">
-          <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
-          Verified True
+        <span className="status-badge status-badge-true">
+          <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 flex-shrink-0" />
+          <span>Verified True</span>
         </span>
       );
     case 'False':
       return (
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-rose-100 text-rose-800 border border-rose-300">
-          <XCircle className="w-3.5 h-3.5 text-rose-600" />
-          False
+        <span className="status-badge status-badge-false">
+          <XCircle className="w-3.5 h-3.5 text-rose-600 flex-shrink-0" />
+          <span>False</span>
         </span>
       );
     case 'Misleading':
       return (
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-900 border border-amber-300">
-          <AlertCircle className="w-3.5 h-3.5 text-amber-700" />
-          Misleading
+        <span className="status-badge status-badge-misleading">
+          <AlertCircle className="w-3.5 h-3.5 text-amber-600 flex-shrink-0" />
+          <span>Misleading</span>
         </span>
       );
     case 'Unverified':
     default:
       return (
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-amber-500 text-slate-950 border border-amber-600 shadow-sm animate-pulse">
-          <AlertTriangle className="w-3.5 h-3.5 text-slate-950" />
-          Unverified
+        <span className="status-badge status-badge-unverified">
+          <AlertTriangle className="w-3.5 h-3.5 text-amber-700 flex-shrink-0" />
+          <span>Unverified</span>
         </span>
       );
   }
@@ -73,26 +79,33 @@ export function StatusBadge({ status }) {
  * Always shows reason text, never just a bare label.
  */
 export function FlagChip({ flag }) {
-  // flag is { type: string, reason: string }
   const type = typeof flag === 'object' ? flag.type : flag;
   const reason = typeof flag === 'object' ? flag.reason : '';
 
-  let colorStyle = 'bg-slate-100 text-slate-700 border-slate-200';
-  if (type === 'Sensational') colorStyle = 'bg-orange-50 text-orange-800 border-orange-200';
-  else if (type === 'Shouting') colorStyle = 'bg-purple-50 text-purple-800 border-purple-200';
-  else if (type === 'Unsourced') colorStyle = 'bg-amber-50 text-amber-800 border-amber-200';
+  let chipClass = 'flag-chip-sensational';
+  let Icon = Tag;
+
+  if (type === 'Shouting') {
+    chipClass = 'flag-chip-shouting';
+    Icon = Volume2;
+  } else if (type === 'Unsourced') {
+    chipClass = 'flag-chip-unsourced';
+    Icon = HelpCircle;
+  } else if (type === 'Sensational') {
+    chipClass = 'flag-chip-sensational';
+    Icon = AlertCircle;
+  }
 
   return (
-    <span
-      className={`inline-flex flex-col gap-0.5 px-2.5 py-1 rounded text-xs font-medium border ${colorStyle}`}
-      title={reason}
-    >
-      <span className="flex items-center gap-1">
-        <Tag className="w-3 h-3 opacity-70 flex-shrink-0" />
+    <span className={`flag-chip ${chipClass}`} title={reason}>
+      <span className="flag-chip-title">
+        <Icon className="w-3 h-3 flex-shrink-0 opacity-80" />
         {type}
       </span>
       {reason && (
-        <span className="text-[10px] opacity-75 font-normal pl-4">{reason}</span>
+        <span className="flag-chip-reason">
+          {reason}
+        </span>
       )}
     </span>
   );

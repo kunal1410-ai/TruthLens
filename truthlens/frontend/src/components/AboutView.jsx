@@ -1,119 +1,156 @@
 import React from 'react';
-import { Shield, AlertTriangle, ArrowUpDown, Eye, Lock, CheckCircle, Flame, Layers } from 'lucide-react';
+import {
+  Shield,
+  ArrowUpDown,
+  Eye,
+  Lock,
+  Flame,
+  CheckCircle2,
+  FileText,
+  Search,
+  UserCheck,
+  Zap,
+  ArrowRight
+} from 'lucide-react';
 
 export default function AboutView({ onStartDemo }) {
   return (
     <div className="about-container">
+      {/* Hero Header */}
       <div className="about-hero">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-semibold mb-3">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-bold border border-blue-200 mb-2">
           <Shield className="w-3.5 h-3.5 text-blue-600" />
-          Hackathon Architecture & Decision Guide
+          <span>Triage Architecture &amp; Decision Framework</span>
         </div>
-        <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
-          How TruthLens Triages Misinformation
-        </h1>
-        <p className="text-base text-slate-600 mt-2 max-w-2xl mx-auto">
-          Built on the core principle: <strong className="text-slate-900">Risk does not equal Falsehood</strong>. TruthLens automates triage prioritization so human reviewers can act where harm spreads fastest.
+        <h1>How TruthLens Triages Misinformation</h1>
+        <p className="text-sm text-slate-600 max-w-2xl mx-auto mt-2 leading-relaxed">
+          Built on a fundamental principle: <strong className="text-slate-900">High Risk does NOT mean False</strong>. TruthLens neutralizes algorithmic bias by automating triage prioritization while preserving human judgment for factual truth.
         </p>
       </div>
 
-      {/* Five Boxes Flow */}
+      {/* The 5-Step Pipeline Flow */}
       <div className="flow-card">
-        <h2 className="section-title mb-4 text-center">The 5 Core Pipeline Boxes</h2>
+        <div className="flex items-center justify-between mb-4">
+          <span className="section-title">End-to-End Triage Workflow</span>
+          <span className="text-xs text-slate-400">Step 1 through Step 5</span>
+        </div>
         <div className="pipeline-grid">
           <div className="pipeline-step">
             <div className="pipeline-num">1</div>
             <div className="pipeline-title">Submit Claim</div>
-            <div className="pipeline-desc">User pastes text, selects platform & category, optional source.</div>
+            <div className="pipeline-desc">User pastes viral message, selects platform &amp; optional source URL.</div>
           </div>
           <div className="pipeline-step">
             <div className="pipeline-num">2</div>
-            <div className="pipeline-title">Analyze Risk</div>
-            <div className="pipeline-desc">Deterministic 3-rule engine flags sensationalism, shouting, & unsourced content.</div>
+            <div className="pipeline-title">Deterministic Risk</div>
+            <div className="pipeline-desc">Automated rules detect sensationalism, panic shouting, and missing citations.</div>
           </div>
           <div className="pipeline-step">
             <div className="pipeline-num">3</div>
             <div className="pipeline-title">Public Feed</div>
-            <div className="pipeline-desc">Transparent feed with DP1 (Risk-first ordering) and DP2 (Unverified public visibility).</div>
+            <div className="pipeline-desc">Transparent queue surfaces high-risk urgency first under DP1 and DP2.</div>
           </div>
           <div className="pipeline-step">
             <div className="pipeline-num">4</div>
-            <div className="pipeline-title">Detail View</div>
-            <div className="pipeline-desc">Inspect metadata, timestamps, and DP3 (Immutable original claim text).</div>
+            <div className="pipeline-title">Audit Record</div>
+            <div className="pipeline-desc">Submitted text is permanently immutable under DP3 to prevent risk laundering.</div>
           </div>
           <div className="pipeline-step">
             <div className="pipeline-num">5</div>
-            <div className="pipeline-title">Human Review</div>
-            <div className="pipeline-desc">Reviewer selects Verified True, False, or Misleading with contextual notes.</div>
+            <div className="pipeline-title">Human Verdict</div>
+            <div className="pipeline-desc">Human reviewer marks True, False, or Misleading with factual citation note.</div>
           </div>
         </div>
       </div>
 
-      {/* The 3 Decision Points */}
-      <h2 className="section-title text-xl mb-4 mt-8">The Three Architectural Decisions</h2>
-      <div className="decisions-grid">
-        <div className="decision-card">
-          <div className="decision-header">
-            <ArrowUpDown className="w-5 h-5 text-blue-600" />
-            <h3 className="font-bold text-slate-800 text-sm">DP1 — Risk-First Ordering</h3>
-          </div>
-          <p className="text-xs text-slate-600 leading-relaxed mt-2">
-            Feed sorts HIGH risk claims above NORMAL claims, regardless of submission timestamp. Within each risk tier, recency applies. Triage demands addressing viral urgency before harmless recent posts.
-          </p>
+      {/* The Three Architectural Decisions (DP1, DP2, DP3) */}
+      <div className="mb-8">
+        <div className="flex items-center gap-2 mb-4">
+          <Zap className="w-4 h-4 text-blue-600" />
+          <h2 className="section-title text-slate-900 text-sm">The Three Core Decision Points</h2>
         </div>
-
-        <div className="decision-card">
-          <div className="decision-header">
-            <Eye className="w-5 h-5 text-amber-600" />
-            <h3 className="font-bold text-slate-800 text-sm">DP2 — Unverified Visibility</h3>
+        <div className="decisions-grid">
+          <div className="decision-card">
+            <div className="decision-header">
+              <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
+                <ArrowUpDown className="w-4 h-4" />
+              </div>
+              <h3 className="font-bold text-slate-900 text-sm">DP1 — Risk-First Ordering</h3>
+            </div>
+            <p className="text-xs text-slate-600 leading-relaxed mt-3">
+              The public queue sorts <strong>High Risk</strong> claims above normal claims. When fact-checkers open the platform, viral urgency is prioritized over older or low-risk submissions.
+            </p>
           </div>
-          <p className="text-xs text-slate-600 leading-relaxed mt-2">
-            Unverified claims are displayed openly in the public feed with a high-visibility ⚠️ UNVERIFIED warning. Quarantining claims slows community awareness; transparent labelling encourages vigilance.
-          </p>
-        </div>
 
-        <div className="decision-card">
-          <div className="decision-header">
-            <Lock className="w-5 h-5 text-emerald-600" />
-            <h3 className="font-bold text-slate-800 text-sm">DP3 — Immutable Claim Text</h3>
+          <div className="decision-card">
+            <div className="decision-header">
+              <div className="w-8 h-8 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center flex-shrink-0">
+                <Eye className="w-4 h-4" />
+              </div>
+              <h3 className="font-bold text-slate-900 text-sm">DP2 — Unverified Visibility</h3>
+            </div>
+            <p className="text-xs text-slate-600 leading-relaxed mt-3">
+              Unverified claims remain publicly visible with prominent warnings. Quarantining claims creates an information vacuum; transparent warning tags foster community awareness.
+            </p>
           </div>
-          <p className="text-xs text-slate-600 leading-relaxed mt-2">
-            Once submitted, claim text is permanently locked in the database. Fact-checkers can only append review status and notes. Any altered claim must be submitted as a new record to protect audit integrity.
-          </p>
+
+          <div className="decision-card">
+            <div className="decision-header">
+              <div className="w-8 h-8 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0">
+                <Lock className="w-4 h-4" />
+              </div>
+              <h3 className="font-bold text-slate-900 text-sm">DP3 — Immutable Claim Text</h3>
+            </div>
+            <p className="text-xs text-slate-600 leading-relaxed mt-3">
+              Submitted text and automated risk flags are frozen permanently. Allowing edits would enable malicious actors to launder claim text after a high-risk rating is applied.
+            </p>
+          </div>
         </div>
       </div>
 
-      {/* The 3 Risk Engine Rules */}
-      <div className="rules-section mt-8">
-        <h2 className="section-title text-xl mb-4">Deterministic Risk Engine Rules</h2>
+      {/* Deterministic Risk Rules */}
+      <div className="flow-card">
+        <div className="flex items-center gap-2 mb-4">
+          <Flame className="w-4 h-4 text-red-600" />
+          <h2 className="section-title text-slate-900 text-sm">Deterministic Risk Engine Rules</h2>
+        </div>
         <div className="rules-grid">
           <div className="rule-item">
-            <div className="rule-badge bg-orange-100 text-orange-800">Rule 1 — Sensational</div>
-            <p className="text-xs text-slate-700 mt-2">
-              Triggers if text contains: <code className="rule-code">&quot;breaking&quot;</code>, <code className="rule-code">&quot;shocking&quot;</code>, or <code className="rule-code">&quot;share before deleted&quot;</code> (case-insensitive).
+            <span className="rule-badge bg-orange-100 text-orange-800">Rule 1 — Sensationalism</span>
+            <p className="text-xs text-slate-600 mt-2 leading-relaxed">
+              Triggers when text matches alarmist viral triggers: <code className="rule-code">breaking</code>, <code className="rule-code">shocking</code>, or <code className="rule-code">share before deleted</code>.
             </p>
           </div>
 
           <div className="rule-item">
-            <div className="rule-badge bg-purple-100 text-purple-800">Rule 2 — Shouting</div>
-            <p className="text-xs text-slate-700 mt-2">
-              Triggers if uppercase letters exceed <strong>50%</strong> of all alphabetic characters, indicating panic capitalization or alarmist phrasing.
+            <span className="rule-badge bg-purple-100 text-purple-800">Rule 2 — Shouting</span>
+            <p className="text-xs text-slate-600 mt-2 leading-relaxed">
+              Triggers if uppercase letters exceed <strong>50%</strong> of all alphabetic characters (minimum 5 letters), detecting panic capitalization.
             </p>
           </div>
 
           <div className="rule-item">
-            <div className="rule-badge bg-amber-100 text-amber-800">Rule 3 — Unsourced</div>
-            <p className="text-xs text-slate-700 mt-2">
-              Triggers if the submitter does not provide a valid verification source link (empty or missing URL).
+            <span className="rule-badge bg-amber-100 text-amber-800">Rule 3 — Unsourced</span>
+            <p className="text-xs text-slate-600 mt-2 leading-relaxed">
+              Triggers if no source link is provided. Credible evidence links provide accountability and prevent unsubstantiated spread.
             </p>
           </div>
         </div>
 
-        <div className="triage-callout mt-4">
-          <Flame className="w-5 h-5 text-red-600 flex-shrink-0" />
-          <div className="text-xs text-slate-800">
-            <strong>Triage Formula:</strong> 2 or more flags &rarr; <span className="text-red-700 font-bold">HIGH RISK</span>. 0 or 1 flag &rarr; <span className="text-emerald-700 font-bold">NORMAL RISK</span>.
+        <div className="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between flex-wrap gap-3">
+          <div className="text-xs text-slate-700">
+            <strong>Triage Scoring Formula:</strong> 2 or more active flags &rarr; <span style={{ color: '#dc2626', fontWeight: 700 }}>HIGH RISK</span>. 0 or 1 flag &rarr; <span style={{ color: '#059669', fontWeight: 700 }}>NORMAL</span>.
           </div>
+          {onStartDemo && (
+            <button
+              type="button"
+              className="view-feed-btn"
+              onClick={onStartDemo}
+            >
+              <span>Test Submit Form</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          )}
         </div>
       </div>
     </div>

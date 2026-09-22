@@ -10,10 +10,11 @@ import {
   AlertTriangle,
   Lock,
   UserCheck,
-  CheckCircle,
+  CheckCircle2,
   XCircle,
   AlertCircle,
   Check,
+  Info
 } from 'lucide-react';
 
 export default function ClaimDetailModal({ claimId, onClose, onClaimUpdated }) {
@@ -21,7 +22,7 @@ export default function ClaimDetailModal({ claimId, onClose, onClaimUpdated }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Review Form State — use exact spec status strings
+  // Review Form State — exact spec status strings
   const [selectedStatus, setSelectedStatus] = useState('Verified True');
   const [reviewerNote, setReviewerNote] = useState('');
   const [submittingReview, setSubmittingReview] = useState(false);
@@ -62,7 +63,7 @@ export default function ClaimDetailModal({ claimId, onClose, onClaimUpdated }) {
     e.preventDefault();
     if (!selectedStatus) return;
     if (!reviewerNote.trim()) {
-      setError('Reviewer note is required.');
+      setError('Reviewer note is required to explain the factual basis of your verdict.');
       return;
     }
 
@@ -79,16 +80,19 @@ export default function ClaimDetailModal({ claimId, onClose, onClaimUpdated }) {
       setReviewSuccess(true);
       if (onClaimUpdated) onClaimUpdated(updated);
     } catch (err) {
-      setError(err.message || 'Failed to submit review.');
+      setError(err.message || 'Failed to submit review decision.');
     } finally {
       setSubmittingReview(false);
     }
   };
 
   const formatTimestamp = (isoString) => {
-    if (!isoString) return 'N/A';
+    if (!isoString) return 'Pending review';
     try {
-      return new Date(isoString).toLocaleString();
+      return new Date(isoString).toLocaleString(undefined, {
+        dateStyle: 'medium',
+        timeStyle: 'short',
+      });
     } catch {
       return isoString;
     }
@@ -97,22 +101,25 @@ export default function ClaimDetailModal({ claimId, onClose, onClaimUpdated }) {
   if (!claimId) return null;
 
   return (
-    <div className="modal-backdrop" onClick={onClose}>
+    <div className="modal-backdrop" onClick={onClose} role="presentation">
       <div
         className="modal-container"
         onClick={(e) => e.stopPropagation()}
         role="dialog"
         aria-modal="true"
+        aria-labelledby="modal-title"
       >
         {/* Modal Header */}
         <div className="modal-header">
           <div className="flex items-center gap-3">
-            <span className="claim-id-tag">Claim #{claimId}</span>
+            <span id="modal-title" className="claim-id-tag font-bold text-sm">
+              Claim #{claimId}
+            </span>
             {claim && (
-              <>
+              <div className="flex items-center gap-2">
                 <span className="platform-tag">{claim.sourcePlatform}</span>
                 <span className="category-tag">{claim.category}</span>
-              </>
+              </div>
             )}
           </div>
           <button
@@ -121,16 +128,22 @@ export default function ClaimDetailModal({ claimId, onClose, onClaimUpdated }) {
             onClick={onClose}
             aria-label="Close modal"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Modal Content */}
         <div className="modal-content">
           {loading ? (
-            <div className="p-8 text-center text-slate-500">Loading claim details...</div>
+            <div className="p-8 text-center text-slate-500">
+              <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-2" />
+              <p className="text-sm font-medium">Loading claim triage record...</p>
+            </div>
           ) : error && !claim ? (
-            <div className="alert-error m-4"><span>{error}</span></div>
+            <div className="alert-error">
+              <AlertCircle className="w-4 h-4 flex-shrink-0" />
+              <span>{error}</span>
+            </div>
           ) : claim ? (
             <>
               {/* Triage Overview Bar */}
@@ -145,30 +158,30 @@ export default function ClaimDetailModal({ claimId, onClose, onClaimUpdated }) {
                 </div>
               </div>
 
-              {/* 🔒 Immutable Claim Text (DP3) */}
-              <div className="detail-section">
-                <div className="flex items-center justify-between mb-1.5">
+              {/* DP3: Immutable Claim Text */}
+              <div>
+                <div className="flex items-center justify-between mb-2">
                   <span className="section-title">Submitted Claim Text</span>
                   <div
                     className="immutable-badge"
-                    title="Original claim text is permanently locked (DP3). Flags are also frozen — never recalculated, even hypothetically — to prevent text from laundering its own risk score."
+                    title="DP3: Original claim text is permanently locked at submission time to preserve audit trail integrity."
                   >
                     <Lock className="w-3 h-3 text-slate-500" />
-                    <span>🔒 Immutable</span>
+                    <span>Permanent Record (DP3 Immutable)</span>
                   </div>
                 </div>
                 <div className="claim-text-display">
                   &ldquo;{claim.text}&rdquo;
                 </div>
-                <span className="text-[11px] text-slate-400 mt-1 block">
-                  Per DP3, claim text and risk flags are permanently frozen at submission time. Corrections require a brand-new claim submission.
-                </span>
+                <p className="text-[11px] text-slate-400 mt-1.5">
+                  Original text and automated triage flags are frozen upon submission. Text cannot be edited to alter its risk profile.
+                </p>
               </div>
 
               {/* Source & Metadata Grid */}
               <div className="detail-meta-grid">
                 <div className="meta-box">
-                  <span className="meta-box-label">Source Link</span>
+                  <span className="meta-box-label">Source Evidence</span>
                   {claim.sourceLink ? (
                     <a
                       href={claim.sourceLink}
@@ -181,28 +194,27 @@ export default function ClaimDetailModal({ claimId, onClose, onClaimUpdated }) {
                       <ExternalLink className="w-3 h-3 flex-shrink-0 opacity-70" />
                     </a>
                   ) : (
-                    <span className="text-amber-800 text-xs italic font-medium">
-                      ⚠️ No source provided (Unsourced flag active)
+                    <span className="text-xs font-semibold" style={{ color: '#92400e' }}>
+                      ⚠️ No source link provided (Unsourced signal triggered)
                     </span>
                   )}
                 </div>
 
-                {/* Risk Flags — always show type + reason */}
                 <div className="meta-box">
-                  <span className="meta-box-label">Triggered Risk Flags</span>
-                  <div className="flex flex-col gap-1.5 mt-0.5">
+                  <span className="meta-box-label">Triggered Risk Signals</span>
+                  <div className="flex flex-col gap-1 mt-0.5">
                     {claim.flags && claim.flags.length > 0 ? (
                       claim.flags.map((flag, i) => (
                         <FlagChip key={i} flag={flag} />
                       ))
                     ) : (
-                      <span className="text-xs text-slate-500 italic">No flags triggered</span>
+                      <span className="text-xs text-slate-500 italic">No automated risk flags triggered</span>
                     )}
                   </div>
                 </div>
 
                 <div className="meta-box">
-                  <span className="meta-box-label">Submitted At</span>
+                  <span className="meta-box-label">Submitted Timestamp</span>
                   <div className="flex items-center gap-1.5 text-xs text-slate-700">
                     <Clock className="w-3.5 h-3.5 text-slate-400" />
                     <span>{formatTimestamp(claim.submittedAt)}</span>
@@ -210,7 +222,7 @@ export default function ClaimDetailModal({ claimId, onClose, onClaimUpdated }) {
                 </div>
 
                 <div className="meta-box">
-                  <span className="meta-box-label">Reviewed At</span>
+                  <span className="meta-box-label">Last Human Verification</span>
                   <div className="flex items-center gap-1.5 text-xs text-slate-700">
                     <Clock className="w-3.5 h-3.5 text-slate-400" />
                     <span>{formatTimestamp(claim.reviewedAt)}</span>
@@ -218,63 +230,63 @@ export default function ClaimDetailModal({ claimId, onClose, onClaimUpdated }) {
                 </div>
               </div>
 
-              {/* Existing Reviewer Note */}
+              {/* Existing Review Note on Record */}
               {claim.reviewerNote && (
                 <div className="existing-review-box">
-                  <div className="flex items-center gap-1.5 text-xs font-bold text-blue-900 mb-1">
+                  <div className="flex items-center gap-1.5 text-xs font-bold text-blue-900 mb-1.5">
                     <UserCheck className="w-4 h-4 text-blue-600" />
-                    <span>Human Review Note on Record:</span>
+                    <span>Current Human Reviewer Note:</span>
                   </div>
-                  <p className="text-sm text-slate-800 bg-white p-3 rounded border border-blue-200">
+                  <p className="text-sm text-slate-800 bg-white p-3 rounded-md border border-blue-200">
                     {claim.reviewerNote}
                   </p>
                 </div>
               )}
 
-              {/* Human Review Form */}
+              {/* Human Reviewer Workspace */}
               <div className="human-review-card">
                 <div className="review-card-header">
                   <div className="flex items-center gap-2">
                     <UserCheck className="w-5 h-5 text-indigo-600" />
-                    <h3 className="font-bold text-slate-800 text-base">Human Review Decision</h3>
+                    <h3 className="font-bold text-slate-900 text-base">Human Verification Decision</h3>
                   </div>
-                  <span className="text-xs text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded font-medium">
-                    Manual Verification Workflow
+                  <span className="text-xs font-semibold text-indigo-700 bg-indigo-50 px-2.5 py-0.5 rounded-full border border-indigo-200">
+                    Fact-Checker Portal
                   </span>
                 </div>
 
-                <p className="text-xs text-slate-600 mb-3">
-                  Algorithms assess triage urgency; only human fact-checkers determine truth. Select the final verification status below. Re-reviewing is allowed — your decision will overwrite the previous verdict.
+                <p className="text-xs text-slate-600 mb-3.5">
+                  Automated flags only detect viral patterns. Select the verified truth status below based on credible factual evidence. Submitting an update will refresh the public feed.
                 </p>
 
                 {reviewSuccess && (
-                  <div className="alert-success">
-                    <Check className="w-4 h-4" />
-                    <span>Review decision saved! Status updated to "{claim.status}".</span>
+                  <div className="alert-success mb-3">
+                    <Check className="w-4 h-4 flex-shrink-0" />
+                    <span>Verdict saved! Status updated to &ldquo;{claim.status}&rdquo;.</span>
                   </div>
                 )}
 
                 {error && (
-                  <div className="alert-error">
-                    <AlertCircle className="w-4 h-4" />
+                  <div className="alert-error mb-3">
+                    <AlertCircle className="w-4 h-4 flex-shrink-0" />
                     <span>{error}</span>
                   </div>
                 )}
 
-                <form onSubmit={handleReviewSubmit} className="space-y-4">
-                  {/* Status Selection — exact spec strings */}
+                <form onSubmit={handleReviewSubmit} className="flex flex-col gap-3.5">
+                  {/* Status Selection Buttons */}
                   <div>
-                    <label className="form-label mb-1.5 block">Select Veracity Status:</label>
+                    <label className="form-label mb-2">Select Veracity Status:</label>
                     <div className="status-selector-grid">
                       <button
                         type="button"
                         className={`status-btn status-btn-true ${selectedStatus === 'Verified True' ? 'selected' : ''}`}
                         onClick={() => setSelectedStatus('Verified True')}
                       >
-                        <CheckCircle className="w-4 h-4" />
-                        <div className="text-left">
-                          <div className="font-bold text-xs">Verified True</div>
-                          <div className="text-[10px] opacity-80">Supported by reliable sources</div>
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0 mt-0.5" />
+                        <div>
+                          <div className="font-bold text-xs text-slate-900">Verified True</div>
+                          <div className="text-[11px] text-slate-500">Confirmed by credible evidence</div>
                         </div>
                       </button>
 
@@ -283,10 +295,10 @@ export default function ClaimDetailModal({ claimId, onClose, onClaimUpdated }) {
                         className={`status-btn status-btn-false ${selectedStatus === 'False' ? 'selected' : ''}`}
                         onClick={() => setSelectedStatus('False')}
                       >
-                        <XCircle className="w-4 h-4" />
-                        <div className="text-left">
-                          <div className="font-bold text-xs">False</div>
-                          <div className="text-[10px] opacity-80">Refuted by credible evidence</div>
+                        <XCircle className="w-4 h-4 text-rose-600 flex-shrink-0 mt-0.5" />
+                        <div>
+                          <div className="font-bold text-xs text-slate-900">False</div>
+                          <div className="text-[11px] text-slate-500">Refuted by reliable sources</div>
                         </div>
                       </button>
 
@@ -295,35 +307,41 @@ export default function ClaimDetailModal({ claimId, onClose, onClaimUpdated }) {
                         className={`status-btn status-btn-misleading ${selectedStatus === 'Misleading' ? 'selected' : ''}`}
                         onClick={() => setSelectedStatus('Misleading')}
                       >
-                        <AlertCircle className="w-4 h-4" />
-                        <div className="text-left">
-                          <div className="font-bold text-xs">Misleading</div>
-                          <div className="text-[10px] opacity-80">Out of context or exaggerated</div>
+                        <AlertCircle className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                        <div>
+                          <div className="font-bold text-xs text-slate-900">Misleading</div>
+                          <div className="text-[11px] text-slate-500">Out of context or exaggerated</div>
                         </div>
                       </button>
                     </div>
                   </div>
 
-                  {/* Reviewer Note — required */}
+                  {/* Reviewer Note */}
                   <div className="form-group">
                     <label htmlFor="reviewer-note" className="form-label">
-                      Reviewer Note <span className="text-red-500">*</span>
+                      Reviewer Note <span style={{ color: '#ef4444' }}>*</span>
                     </label>
                     <textarea
                       id="reviewer-note"
                       rows={3}
                       className="form-textarea"
-                      placeholder="Explain the finding, citing fact-checking sources, public records, or context..."
+                      placeholder="Explain the factual finding, citing reputable fact-checking sources, government records, or context..."
                       value={reviewerNote}
                       onChange={(e) => setReviewerNote(e.target.value)}
                       required
                     />
-                    <span className="form-hint">Required — must explain the basis for your verdict.</span>
+                    <span className="form-hint">
+                      Required — transparent explanation shown on the public feed card.
+                    </span>
                   </div>
 
                   <div className="flex justify-end gap-3 pt-2">
-                    <button type="button" className="preset-btn" onClick={onClose}>
-                      Close
+                    <button
+                      type="button"
+                      className="preset-btn"
+                      onClick={onClose}
+                    >
+                      Cancel
                     </button>
                     <button
                       type="submit"
@@ -331,11 +349,11 @@ export default function ClaimDetailModal({ claimId, onClose, onClaimUpdated }) {
                       disabled={submittingReview || !reviewerNote.trim()}
                     >
                       {submittingReview ? (
-                        <span>Saving Decision...</span>
+                        <span>Saving Verdict...</span>
                       ) : (
                         <>
                           <ShieldCheck className="w-4 h-4" />
-                          <span>Submit Review</span>
+                          <span>Submit Verification Decision</span>
                         </>
                       )}
                     </button>

@@ -1,7 +1,16 @@
 import React, { useState } from 'react';
 import { createClaim } from '../api';
 import { RiskBadge, FlagChip, StatusBadge } from './RiskBadge';
-import { Send, CheckCircle2, AlertCircle, Sparkles, ArrowRight } from 'lucide-react';
+import {
+  Send,
+  CheckCircle2,
+  AlertCircle,
+  Sparkles,
+  ArrowRight,
+  ShieldAlert,
+  Info,
+  Link as LinkIcon
+} from 'lucide-react';
 
 export default function SubmitClaim({ onClaimCreated, onViewFeed }) {
   const [text, setText] = useState('');
@@ -15,7 +24,7 @@ export default function SubmitClaim({ onClaimCreated, onViewFeed }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!text.trim()) {
-      setError('Please enter the claim text.');
+      setError('Please enter the claim text to evaluate.');
       return;
     }
 
@@ -31,7 +40,7 @@ export default function SubmitClaim({ onClaimCreated, onViewFeed }) {
       });
 
       setResult(created);
-      // Clear form
+      // Clear form inputs
       setText('');
       setSourcePlatform('WhatsApp');
       setCategory('Politics');
@@ -40,7 +49,7 @@ export default function SubmitClaim({ onClaimCreated, onViewFeed }) {
         onClaimCreated(created);
       }
     } catch (err) {
-      setError(err.message || 'Failed to submit claim.');
+      setError(err.message || 'Failed to submit and triage claim.');
     } finally {
       setLoading(false);
     }
@@ -55,7 +64,7 @@ export default function SubmitClaim({ onClaimCreated, onViewFeed }) {
       setCategory('Health');
       setSourceLink('');
     } else if (sampleType === 'shouting') {
-      setText('NASA DISCOVERS WATER ON MARS AGAIN — MAJOR ANNOUNCEMENT COMING');
+      setText('NASA DISCOVERS WATER ON MARS AGAIN — MAJOR ANNOUNCEMENT COMING TONIGHT');
       setSourcePlatform('Instagram');
       setCategory('Other');
       setSourceLink('');
@@ -71,33 +80,44 @@ export default function SubmitClaim({ onClaimCreated, onViewFeed }) {
     <div className="submit-container">
       <div className="form-card">
         <div className="card-header">
-          <div className="card-badge">Step 1 — Input &amp; Analysis</div>
-          <h2 className="card-title">Submit Claim for Triage</h2>
+          <div className="card-badge">Step 1 — Input &amp; Triage</div>
+          <h2 className="card-title">Submit Viral Claim</h2>
           <p className="card-desc">
-            Paste suspicious messages or posts. Our deterministic risk engine will evaluate sensationalism, shouting, and sourcing in real time.
-            Every claim stays <strong>"Unverified"</strong> until a human reviewer sets its status.
+            Submit a suspicious viral claim for automated risk triage. Our deterministic risk engine evaluates sensational keywords, panic shouting, and missing sources. Every submission is preserved publicly as <strong>"Unverified"</strong> until a human fact-checker reviews it.
           </p>
         </div>
 
-        {/* Quick Demo Pre-fills */}
+        {/* Quick Demo Pre-fills for Hackathon Graders */}
         <div className="preset-bar">
           <span className="preset-label">
-            <Sparkles className="w-3.5 h-3.5 text-blue-500" />
-            Quick Demo Presets:
+            <Sparkles className="w-3.5 h-3.5 text-blue-600" />
+            Hackathon Demo Presets:
           </span>
-          <button type="button" className="preset-btn" onClick={() => fillSample('sensational')}>
+          <button
+            type="button"
+            className="preset-btn"
+            onClick={() => fillSample('sensational')}
+          >
             Sensational + Unsourced (High Risk)
           </button>
-          <button type="button" className="preset-btn" onClick={() => fillSample('shouting')}>
+          <button
+            type="button"
+            className="preset-btn"
+            onClick={() => fillSample('shouting')}
+          >
             Shouting + Unsourced (High Risk)
           </button>
-          <button type="button" className="preset-btn" onClick={() => fillSample('normal')}>
+          <button
+            type="button"
+            className="preset-btn"
+            onClick={() => fillSample('normal')}
+          >
             Normal + Sourced (Normal)
           </button>
         </div>
 
         {error && (
-          <div className="alert-error">
+          <div className="alert-error mb-4">
             <AlertCircle className="w-4 h-4 flex-shrink-0" />
             <span>{error}</span>
           </div>
@@ -107,7 +127,7 @@ export default function SubmitClaim({ onClaimCreated, onViewFeed }) {
           {/* Claim Text */}
           <div className="form-group">
             <label htmlFor="claim-text" className="form-label">
-              Claim Text <span className="text-red-500">*</span>
+              Claim Text <span style={{ color: '#ef4444' }}>*</span>
             </label>
             <textarea
               id="claim-text"
@@ -118,13 +138,16 @@ export default function SubmitClaim({ onClaimCreated, onViewFeed }) {
               onChange={(e) => setText(e.target.value)}
               required
             />
+            <span className="form-hint">
+              Original claim text is permanently locked once submitted (DP3 Immutability).
+            </span>
           </div>
 
           <div className="form-row">
             {/* Source Platform */}
-            <div className="form-group flex-1">
+            <div className="form-group">
               <label htmlFor="platform-select" className="form-label">
-                Source Platform <span className="text-red-500">*</span>
+                Source Platform <span style={{ color: '#ef4444' }}>*</span>
               </label>
               <select
                 id="platform-select"
@@ -133,16 +156,16 @@ export default function SubmitClaim({ onClaimCreated, onViewFeed }) {
                 onChange={(e) => setSourcePlatform(e.target.value)}
               >
                 <option value="WhatsApp">WhatsApp</option>
-                <option value="X">X (Twitter)</option>
+                <option value="X">X (formerly Twitter)</option>
                 <option value="Instagram">Instagram</option>
                 <option value="Other">Other</option>
               </select>
             </div>
 
             {/* Category */}
-            <div className="form-group flex-1">
+            <div className="form-group">
               <label htmlFor="category-select" className="form-label">
-                Category <span className="text-red-500">*</span>
+                Category <span style={{ color: '#ef4444' }}>*</span>
               </label>
               <select
                 id="category-select"
@@ -161,18 +184,18 @@ export default function SubmitClaim({ onClaimCreated, onViewFeed }) {
           {/* Source Link */}
           <div className="form-group">
             <label htmlFor="source-link" className="form-label">
-              Source Link <span className="text-slate-400 font-normal">(Optional)</span>
+              Source Link / Evidence URL <span style={{ color: '#94a3b8', fontWeight: 400 }}>(Optional)</span>
             </label>
             <input
               id="source-link"
               type="url"
               className="form-input"
-              placeholder="https://example.com/source-link"
+              placeholder="https://example.com/source-url"
               value={sourceLink}
               onChange={(e) => setSourceLink(e.target.value)}
             />
             <span className="form-hint">
-              Missing source links automatically trigger the <strong>Unsourced</strong> flag.
+              Providing a credible source link avoids the <strong>Unsourced</strong> risk flag.
             </span>
           </div>
 
@@ -182,7 +205,7 @@ export default function SubmitClaim({ onClaimCreated, onViewFeed }) {
             disabled={loading || !text.trim()}
           >
             {loading ? (
-              <span>Analyzing &amp; Triaging...</span>
+              <span>Triaging &amp; Analyzing Risk...</span>
             ) : (
               <>
                 <Send className="w-4 h-4" />
@@ -192,65 +215,67 @@ export default function SubmitClaim({ onClaimCreated, onViewFeed }) {
           </button>
         </form>
 
-        {/* Immediate Result Card */}
+        {/* Real-Time Triage Result Card */}
         {result && (
           <div className="result-card">
             <div className="result-header">
               <div className="flex items-center gap-2">
                 <CheckCircle2 className="w-5 h-5 text-emerald-600" />
-                <span className="font-semibold text-slate-800">Claim Triaged Successfully</span>
+                <strong className="text-slate-900 text-sm">Submission Triaged Successfully</strong>
               </div>
-              <span className="text-xs text-slate-500">ID #{result.id}</span>
+              <span className="text-xs font-semibold text-slate-500">Claim #{result.id}</span>
             </div>
 
-            <div className="result-body">
-              <div className="result-meta-row">
-                <div className="result-meta-item">
-                  <span className="result-meta-label">Calculated Risk:</span>
-                  <RiskBadge level={result.riskLevel} />
-                </div>
-                <div className="result-meta-item">
-                  <span className="result-meta-label">Initial Status:</span>
-                  <StatusBadge status={result.status} />
-                </div>
+            <div className="result-meta-row">
+              <div className="result-meta-item">
+                <span className="result-meta-label">Automated Urgency:</span>
+                <RiskBadge level={result.riskLevel} />
               </div>
-
-              <div className="result-meta-item mt-3">
-                <span className="result-meta-label">Triggered Risk Flags:</span>
-                <div className="flex flex-wrap gap-1.5 mt-1">
-                  {result.flags && result.flags.length > 0 ? (
-                    result.flags.map((flag, i) => <FlagChip key={i} flag={flag} />)
-                  ) : (
-                    <span className="text-xs text-slate-500 italic">None (Clean triage score)</span>
-                  )}
-                </div>
+              <div className="result-meta-item">
+                <span className="result-meta-label">Verification Status:</span>
+                <StatusBadge status={result.status} />
               </div>
+            </div>
 
-              <div className="result-quote">
-                &ldquo;{result.text}&rdquo;
-              </div>
-
-              <div className="result-footer">
-                <p className="result-explanation">
-                  {result.riskLevel === 'High Risk' ? (
-                    <span className="text-red-700">
-                      ⚠️ <strong>High Risk Triage:</strong> 2+ signals detected. This claim is surfaced to the top of the review queue.{' '}
-                      <strong>Remember: High Risk ≠ False!</strong> A human fact-checker must determine the truth.
-                    </span>
-                  ) : (
-                    <span className="text-slate-600">
-                      ℹ️ <strong>Normal Risk Triage:</strong> Fewer than 2 risk signals detected. Still awaiting human verification.
-                    </span>
-                  )}
-                </p>
-
-                {onViewFeed && (
-                  <button type="button" className="view-feed-btn" onClick={onViewFeed}>
-                    <span>View in Public Feed</span>
-                    <ArrowRight className="w-4 h-4" />
-                  </button>
+            <div className="mt-3">
+              <span className="result-meta-label">Detected Risk Flags:</span>
+              <div className="flex flex-wrap gap-1.5 mt-1.5">
+                {result.flags && result.flags.length > 0 ? (
+                  result.flags.map((flag, i) => <FlagChip key={i} flag={flag} />)
+                ) : (
+                  <span className="text-xs text-slate-500 italic">None (Clean triage score)</span>
                 )}
               </div>
+            </div>
+
+            <div className="result-quote">
+              &ldquo;{result.text}&rdquo;
+            </div>
+
+            <div className="result-footer">
+              <p className="result-explanation">
+                {result.riskLevel === 'High Risk' ? (
+                  <span style={{ color: '#991b1b' }}>
+                    <strong>Priority Triage:</strong> Multiple risk flags were detected. This claim is placed at the top of the reviewer triage feed.{' '}
+                    <strong>High Risk does NOT mean False</strong> — awaiting human reviewer verdict.
+                  </span>
+                ) : (
+                  <span style={{ color: '#334155' }}>
+                    <strong>Normal Priority:</strong> Fewer than 2 risk signals detected. Claim queued in the public feed for human fact-checking.
+                  </span>
+                )}
+              </p>
+
+              {onViewFeed && (
+                <button
+                  type="button"
+                  className="view-feed-btn"
+                  onClick={onViewFeed}
+                >
+                  <span>View in Public Feed</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              )}
             </div>
           </div>
         )}

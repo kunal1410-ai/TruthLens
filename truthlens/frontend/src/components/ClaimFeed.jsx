@@ -1,7 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import ClaimCard from './ClaimCard';
 import { getClaims } from '../api';
-import { Filter, RefreshCw, AlertTriangle, ShieldCheck, Flame, Layers } from 'lucide-react';
+import {
+  Layers,
+  Flame,
+  AlertTriangle,
+  ShieldCheck,
+  Search,
+  Filter,
+  RefreshCw,
+  Sparkles,
+  Info,
+  X
+} from 'lucide-react';
 
 export default function ClaimFeed({ onSelectClaim, onNavigateSubmit, refreshSignal }) {
   const [claims, setClaims] = useState([]);
@@ -9,8 +20,8 @@ export default function ClaimFeed({ onSelectClaim, onNavigateSubmit, refreshSign
   const [error, setError] = useState(null);
 
   const [categoryFilter, setCategoryFilter] = useState('All');
-  // Status filter uses exact spec strings
   const [statusFilter, setStatusFilter] = useState('All');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const fetchFeed = async () => {
     setLoading(true);
@@ -34,16 +45,27 @@ export default function ClaimFeed({ onSelectClaim, onNavigateSubmit, refreshSign
 
   const categories = ['All', 'Politics', 'Health', 'Finance', 'Other'];
 
-  // Exact spec status strings + All
   const statuses = [
     { label: 'All Statuses', value: 'All' },
-    { label: '⚠️ Unverified', value: 'Unverified' },
+    { label: 'Unverified', value: 'Unverified' },
     { label: 'Verified True', value: 'Verified True' },
     { label: 'False', value: 'False' },
     { label: 'Misleading', value: 'Misleading' },
   ];
 
-  // Live stats
+  // Filter by search query client-side
+  const filteredClaims = useMemo(() => {
+    if (!searchQuery.trim()) return claims;
+    const q = searchQuery.toLowerCase().trim();
+    return claims.filter((c) =>
+      c.text.toLowerCase().includes(q) ||
+      (c.sourcePlatform && c.sourcePlatform.toLowerCase().includes(q)) ||
+      (c.category && c.category.toLowerCase().includes(q)) ||
+      String(c.id).includes(q)
+    );
+  }, [claims, searchQuery]);
+
+  // Real-time statistics based on loaded claims
   const totalCount = claims.length;
   const highRiskCount = claims.filter((c) => c.riskLevel === 'High Risk').length;
   const unverifiedCount = claims.filter((c) => c.status === 'Unverified').length;
@@ -51,10 +73,10 @@ export default function ClaimFeed({ onSelectClaim, onNavigateSubmit, refreshSign
 
   return (
     <div className="feed-container">
-      {/* Triage Stats Banner */}
+      {/* Triage Stats Dashboard */}
       <div className="stats-grid">
         <div className="stat-card">
-          <div className="stat-icon-wrapper bg-blue-50 text-blue-600">
+          <div className="stat-icon-wrapper" style={{ background: '#eff6ff', color: '#2563eb' }}>
             <Layers className="w-5 h-5" />
           </div>
           <div>
@@ -64,150 +86,190 @@ export default function ClaimFeed({ onSelectClaim, onNavigateSubmit, refreshSign
         </div>
 
         <div className="stat-card">
-          <div className="stat-icon-wrapper bg-red-50 text-red-600">
+          <div className="stat-icon-wrapper" style={{ background: '#fef2f2', color: '#dc2626' }}>
             <Flame className="w-5 h-5" />
           </div>
           <div>
-            <div className="stat-value text-red-600">{highRiskCount}</div>
-            <div className="stat-label">High Risk (Priority Triage)</div>
+            <div className="stat-value" style={{ color: '#dc2626' }}>{highRiskCount}</div>
+            <div className="stat-label">High Risk (Priority Queue)</div>
           </div>
         </div>
 
         <div className="stat-card">
-          <div className="stat-icon-wrapper bg-amber-50 text-amber-600">
+          <div className="stat-icon-wrapper" style={{ background: '#fffbeb', color: '#d97706' }}>
             <AlertTriangle className="w-5 h-5" />
           </div>
           <div>
-            <div className="stat-value text-amber-700">{unverifiedCount}</div>
+            <div className="stat-value" style={{ color: '#d97706' }}>{unverifiedCount}</div>
             <div className="stat-label">Awaiting Verification</div>
           </div>
         </div>
 
         <div className="stat-card">
-          <div className="stat-icon-wrapper bg-emerald-50 text-emerald-600">
+          <div className="stat-icon-wrapper" style={{ background: '#ecfdf5', color: '#059669' }}>
             <ShieldCheck className="w-5 h-5" />
           </div>
           <div>
-            <div className="stat-value text-emerald-600">{reviewedCount}</div>
+            <div className="stat-value" style={{ color: '#059669' }}>{reviewedCount}</div>
             <div className="stat-label">Human Reviewed</div>
           </div>
         </div>
       </div>
 
-      {/* Philosophy Banner */}
-      <div className="philosophy-banner">
-        <p className="text-sm font-semibold text-slate-800">
-          🔍 TruthLens is neutral by design — it checks information, not ideologies.
-        </p>
-        <p className="text-xs text-slate-600 mt-0.5">
-          Every claim stays <strong>"Unverified"</strong> until a human reviewer sets its status. Risk ≠ Truth.
-        </p>
-      </div>
-
-      {/* DP1 Banner */}
-      <div className="dp1-banner">
-        <div className="flex items-center gap-2 font-semibold text-slate-800 text-sm">
-          <span>⚡ Feed Order (DP1 — 3-tier triage):</span>
+      {/* Triage Rule Callout Banner */}
+      <aside className="triage-callout-card" aria-label="Triage philosophy banner">
+        <div className="triage-callout-text">
+          <h4>
+            <Info className="w-4 h-4 text-blue-600 flex-shrink-0" />
+            Neutrality &amp; Human-in-the-Loop Principle
+          </h4>
+          <p>
+            <strong>High Risk does NOT mean False.</strong> The automated engine flags sensational, shouting, or unsourced patterns to surface urgency. Only human reviewers determine factual truth.
+          </p>
         </div>
-        <p className="text-xs text-slate-600 mt-0.5">
-          <strong>Tier 1:</strong> Unverified + High Risk (newest first) →{' '}
-          <strong>Tier 2:</strong> Unverified + Normal (newest first) →{' '}
-          <strong>Tier 3:</strong> Reviewed claims (newest first). Once a human has rendered a verdict, the claim no longer competes for reviewer attention.
-        </p>
-      </div>
+        <div className="triage-rule-pill">
+          <Sparkles className="w-3.5 h-3.5" />
+          <span>DP1: High Risk Surfaced First</span>
+        </div>
+      </aside>
 
-      {/* Filter Toolbar — only category + status per spec (no extra risk filter) */}
-      <div className="feed-toolbar">
-        <div className="toolbar-section">
-          <span className="toolbar-label">
-            <Filter className="w-3.5 h-3.5" />
-            Category:
-          </span>
-          <div className="filter-chips">
-            {categories.map((cat) => (
+      {/* Feed Control Panel (Search + Category + Status Filters + Refresh) */}
+      <div className="feed-control-panel">
+        <div className="feed-control-top">
+          <div className="search-input-wrapper">
+            <Search className="w-4 h-4 search-icon" />
+            <input
+              type="text"
+              className="search-input"
+              placeholder="Search claims, keywords, or ID..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              aria-label="Search claims"
+            />
+            {searchQuery && (
               <button
-                key={cat}
                 type="button"
-                className={`chip ${categoryFilter === cat ? 'chip-active' : ''}`}
-                onClick={() => setCategoryFilter(cat)}
+                onClick={() => setSearchQuery('')}
+                style={{
+                  position: 'absolute',
+                  right: '0.75rem',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  color: '#94a3b8'
+                }}
+                aria-label="Clear search"
               >
-                {cat}
+                <X className="w-4 h-4" />
               </button>
-            ))}
+            )}
           </div>
-        </div>
 
-        <div className="toolbar-section">
-          <span className="toolbar-label">Status:</span>
-          <div className="filter-chips">
-            {statuses.map((st) => (
-              <button
-                key={st.value}
-                type="button"
-                className={`chip ${statusFilter === st.value ? 'chip-active' : ''}`}
-                onClick={() => setStatusFilter(st.value)}
-              >
-                {st.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="toolbar-section flex-row-end">
           <button
             type="button"
             className="refresh-btn"
             onClick={fetchFeed}
-            title="Refresh Feed"
             disabled={loading}
+            title="Refresh Feed"
           >
-            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-            <span>Refresh</span>
+            <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
+            <span>{loading ? 'Refreshing...' : 'Refresh Feed'}</span>
           </button>
+        </div>
+
+        <div className="feed-filter-groups">
+          <div className="filter-row">
+            <span className="filter-label">
+              <Filter className="w-3 h-3" />
+              Category:
+            </span>
+            <div className="filter-chips">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  type="button"
+                  className={`chip ${categoryFilter === cat ? 'chip-active' : ''}`}
+                  onClick={() => setCategoryFilter(cat)}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="filter-row">
+            <span className="filter-label">Status:</span>
+            <div className="filter-chips">
+              {statuses.map((st) => (
+                <button
+                  key={st.value}
+                  type="button"
+                  className={`chip ${statusFilter === st.value ? 'chip-active' : ''}`}
+                  onClick={() => setStatusFilter(st.value)}
+                >
+                  {st.label}
+                </button>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
 
+      {/* Error State */}
       {error && (
-        <div className="alert-error">
+        <div className="alert-error mb-4">
+          <AlertTriangle className="w-4 h-4 flex-shrink-0" />
           <span>{error}</span>
-          <button onClick={fetchFeed} className="underline font-medium text-xs ml-2">
+          <button onClick={fetchFeed} className="font-semibold underline ml-auto text-xs">
             Try again
           </button>
         </div>
       )}
 
+      {/* Claims List */}
       <div className="feed-list">
         {loading && claims.length === 0 ? (
           <div className="empty-state">
-            <RefreshCw className="w-8 h-8 text-blue-500 animate-spin mx-auto mb-2" />
-            <p className="text-slate-600">Loading claims feed...</p>
+            <RefreshCw className="w-8 h-8 text-blue-600 animate-spin mx-auto mb-3" />
+            <h3 className="text-base font-bold text-slate-800">Loading Claims Queue...</h3>
+            <p className="text-sm text-slate-500 mt-1">Retrieving latest triaged submissions from TruthLens</p>
           </div>
-        ) : claims.length === 0 ? (
+        ) : filteredClaims.length === 0 ? (
           <div className="empty-state">
             <AlertTriangle className="w-10 h-10 text-slate-400 mx-auto mb-3" />
-            <h3 className="font-bold text-slate-800 text-lg">No claims match filters</h3>
+            <h3 className="font-bold text-slate-800 text-lg">No Claims Match Your Filter</h3>
             <p className="text-slate-500 text-sm mt-1 max-w-md mx-auto">
-              No claims found for category &ldquo;{categoryFilter}&rdquo; and status &ldquo;{statusFilter}&rdquo;.
+              {searchQuery
+                ? `No claims found matching "${searchQuery}". Try clearing search or adjusting filters.`
+                : `No claims found for Category "${categoryFilter}" and Status "${statusFilter}".`}
             </p>
             <div className="mt-4 flex justify-center gap-3">
               <button
+                type="button"
                 className="chip chip-active"
                 onClick={() => {
                   setCategoryFilter('All');
                   setStatusFilter('All');
+                  setSearchQuery('');
                 }}
               >
-                Reset Filters
+                Reset All Filters
               </button>
               {onNavigateSubmit && (
-                <button className="submit-btn" onClick={onNavigateSubmit}>
+                <button
+                  type="button"
+                  className="nav-cta-btn"
+                  onClick={onNavigateSubmit}
+                >
                   Submit a Claim
                 </button>
               )}
             </div>
           </div>
         ) : (
-          claims.map((claim) => (
+          filteredClaims.map((claim) => (
             <ClaimCard
               key={claim.id}
               claim={claim}
