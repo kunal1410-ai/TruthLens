@@ -72,8 +72,8 @@ body {
   -moz-osx-font-smoothing: grayscale;
   background-color: #080c18;
   background-image: 
-    linear-gradient(rgba(10, 15, 29, 0.78), rgba(10, 15, 29, 0.88)),
-    url('/bg.jpg');
+    linear-gradient(rgba(10, 15, 29, 0.48), rgba(10, 15, 29, 0.62)),
+    url('/images/misinformation-bg.png');
   background-size: cover;
   background-position: center center;
   background-repeat: no-repeat;
@@ -539,14 +539,27 @@ body {
 }
 
 .platform-tag {
-  font-size: 0.7rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.725rem;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  padding: 0.25rem 0.6rem;
+  letter-spacing: 0.03em;
+  padding: 0.25rem 0.65rem;
   border-radius: var(--radius-sm);
   background: #0f172a;
   color: #ffffff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.15);
+  vertical-align: middle;
+}
+
+.platform-tag-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
 }
 
 .category-tag {

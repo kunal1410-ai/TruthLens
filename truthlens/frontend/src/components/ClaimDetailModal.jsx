@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { reviewClaim, getClaim } from '../api';
 import { RiskBadge, StatusBadge, FlagChip } from './RiskBadge';
+import { PlatformBadge } from './PlatformIcon';
 import {
   X,
   Clock,
@@ -117,7 +118,7 @@ export default function ClaimDetailModal({ claimId, onClose, onClaimUpdated }) {
             </span>
             {claim && (
               <div className="flex items-center gap-2">
-                <span className="platform-tag">{claim.sourcePlatform}</span>
+                <PlatformBadge platform={claim.sourcePlatform} />
                 <span className="category-tag">{claim.category}</span>
               </div>
             )}

@@ -1,5 +1,6 @@
 import React from 'react';
 import { RiskBadge, StatusBadge, FlagChip } from './RiskBadge';
+import { PlatformBadge } from './PlatformIcon';
 import { Clock, ArrowUpRight, MessageSquare, AlertTriangle, CheckCircle2 } from 'lucide-react';
 
 export default function ClaimCard({ claim, onSelect }) {
@@ -41,7 +42,7 @@ export default function ClaimCard({ claim, onSelect }) {
 
       <div className="card-top-row">
         <div className="card-meta-tags">
-          <span className="platform-tag">{claim.sourcePlatform}</span>
+          <PlatformBadge platform={claim.sourcePlatform} />
           <span className="category-tag">{claim.category}</span>
           <span className="claim-id-tag">#{claim.id}</span>
         </div>
