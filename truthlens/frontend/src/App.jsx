@@ -28,6 +28,7 @@ export default function App() {
 
   return (
     <div className="app-layout">
+      <div className="watermark-overlay" aria-hidden="true" />
       <Navbar activeTab={activeTab} setActiveTab={setActiveTab} />
 
       <main className="main-content">
