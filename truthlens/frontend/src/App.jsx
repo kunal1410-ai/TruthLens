@@ -59,22 +59,6 @@ export default function App() {
           onClaimUpdated={handleClaimUpdated}
         />
       )}
-
-      {/* Footer */}
-      <footer className="footer">
-        <div className="footer-container">
-          <div className="text-xs text-slate-500">
-            <strong>TruthLens</strong> — Misinformation Triage Platform MVP • 6-Hour Hackathon
-          </div>
-          <div className="flex items-center gap-4 text-xs text-slate-400">
-            <span>FastAPI + SQLite</span>
-            <span>•</span>
-            <span>React + Vite</span>
-            <span>•</span>
-            <span>No Auth Required</span>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }
